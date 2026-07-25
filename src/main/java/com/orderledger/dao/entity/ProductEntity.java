@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "orderLedgerProducts")
+@Table(name = "order_ledger_products")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,6 +34,6 @@ public class ProductEntity {
     @Min(value = 0, message = "Stok miqdarı mənfi ola bilməz")
     Integer stockQuantity;
 
-//    @Version // Optimistic locking
-//     Long version;
+    @Version
+    Long version;
 }

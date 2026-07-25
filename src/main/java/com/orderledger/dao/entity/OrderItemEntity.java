@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "orderLedgerOrder_items")
+@Table(name = "order_ledger_order_items")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

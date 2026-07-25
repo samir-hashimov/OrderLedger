@@ -11,7 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orderLedgerOrder_status_history")
+@Table(name = "order_ledger_order_status_history")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

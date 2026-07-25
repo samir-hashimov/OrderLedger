@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "orderLedgerOrders")
+@Table(name = "order_ledger_orders")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
