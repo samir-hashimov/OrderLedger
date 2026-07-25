@@ -18,13 +18,6 @@ public class GlobalExceptionHandling {
         return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
     }
 
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> UserAgeHandler(RuntimeException ex) {
-        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
-
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
