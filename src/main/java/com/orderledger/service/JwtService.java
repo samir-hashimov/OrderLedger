@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -14,11 +15,14 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+    @Value("${JWT_SECRET}")
+    private String SECRET_KEY;
 
-    private static final String SECRET_KEY = "c2FtaXJfaGFzaGltb3ZfdGFza2JvYXJkX3NlY3VyZV9qd3Rfc2VjcmV0X2tleV8yMDI2";
+    @Value(("${ACCESS_TOKEN_EXPIRATION}"))
+    private long ACCESS_TOKEN_EXPIRATION;
 
-    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 15;
-    private static final long REFRESH_TOKEN_EXPIRATION = 1000L * 60 * 60 * 24 * 7;
+    @Value("${REFRESH_TOKEN_EXPIRATION}")
+    private long REFRESH_TOKEN_EXPIRATION;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
