@@ -8,5 +8,6 @@ import java.util.List;
 @Builder
 public record OrderCreateRequest(
         @NotEmpty(message = "Sifarişdə ən azı bir məhsul olmalıdır")
-        List<OrderItemRequest> items
+        List<OrderItemRequest> items,
+        String couponCode
 ) {}

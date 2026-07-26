@@ -1,6 +1,7 @@
 package com.orderledger.service;
 
 import com.orderledger.dao.entity.*;
+import com.orderledger.dao.repository.CouponRepository;
 import com.orderledger.dao.repository.OrderRepository;
 import com.orderledger.dao.repository.UserRepository;
 import com.orderledger.dto.request.OrderCreateRequest;
@@ -8,6 +9,7 @@ import com.orderledger.dto.request.OrderItemRequest;
 import com.orderledger.dto.request.OrderStatusUpdateRequest;
 import com.orderledger.dto.response.OrderResponse;
 import com.orderledger.exception.InsufficientStockException;
+import com.orderledger.exception.InvalidCouponException;
 import com.orderledger.exception.InvalidStatusTransitionException;
 import com.orderledger.exception.ResourceNotFoundException;
 import com.orderledger.mapper.OrderMapper;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Service
@@ -28,6 +32,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final ProductService productService;
     private final OrderMapper orderMapper;
+    private final CouponRepository couponRepository;
 
     @Transactional
     public OrderResponse createOrder(OrderCreateRequest request) {
@@ -45,7 +50,6 @@ public class OrderService {
 
         BigDecimal totalAmount = BigDecimal.ZERO;
 
-        // 2. Məhsul stokunun yoxlanması və azaldılması
         for (OrderItemRequest itemReq : request.items()) {
             ProductEntity product = productService.getProductEntityById(itemReq.productId());
 
@@ -54,7 +58,6 @@ public class OrderService {
                         + product.getName() + " (Mövcud stok: " + product.getStockQuantity() + ")");
             }
 
-            // Stokun yenilənməsi (@Version vasitəsilə Optimistic Lock qorunur)
             product.setStockQuantity(product.getStockQuantity() - itemReq.quantity());
 
             BigDecimal subtotal = product.getPrice().multiply(BigDecimal.valueOf(itemReq.quantity()));
@@ -71,9 +74,38 @@ public class OrderService {
             order.getItems().add(orderItem);
         }
 
-        order.setTotalAmount(totalAmount);
 
-        // 3. İlk Status Log-unun yazılması
+        BigDecimal originalTotal = totalAmount;
+        BigDecimal discountAmount = BigDecimal.ZERO;
+        CouponEntity appliedCoupon = null;
+
+        if (request.couponCode() != null && !request.couponCode().trim().isEmpty()) {
+            appliedCoupon = couponRepository.findByCodeAndIsActiveTrue(request.couponCode().trim().toUpperCase())
+                    .orElseThrow(() -> new InvalidCouponException("Daxil edilən promo kod keçərsizdir: " + request.couponCode()));
+
+            // Validation Rules
+            if (appliedCoupon.getExpirationDate().isBefore(LocalDateTime.now())) {
+                throw new InvalidCouponException("Promo kodun istifadə müddəti bitib!");
+            }
+
+            if (appliedCoupon.getCurrentUsageCount() >= appliedCoupon.getMaxUsageLimit()) {
+                throw new InvalidCouponException("Promo kodun maksimum istifadə limitinə çatılıb!");
+            }
+
+            discountAmount = originalTotal
+                    .multiply(appliedCoupon.getDiscountPercentage())
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+            totalAmount = originalTotal.subtract(discountAmount);
+
+            appliedCoupon.setCurrentUsageCount(appliedCoupon.getCurrentUsageCount() + 1);
+        }
+
+        order.setTotalAmount(totalAmount);
+        order.setDiscountAmount(discountAmount);
+        order.setCoupon(appliedCoupon);
+
+
         OrderStatusHistoryEntity initialHistory = OrderStatusHistoryEntity.builder()
                 .order(order)
                 .previousStatus(null)

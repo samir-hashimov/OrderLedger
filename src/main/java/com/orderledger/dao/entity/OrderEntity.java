@@ -44,6 +44,12 @@ public class OrderEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     List<OrderStatusHistoryEntity> statusHistories;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coupon_id")
+    CouponEntity coupon;
+
+    BigDecimal discountAmount;
     @CreationTimestamp
     LocalDateTime createdAt;
 

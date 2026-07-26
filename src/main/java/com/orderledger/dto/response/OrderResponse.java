@@ -16,5 +16,7 @@ public record OrderResponse(
         OrderStatus status,
         List<OrderItemResponse> items,
         List<OrderStatusHistoryResponse> statusHistories,
+        BigDecimal discountAmount,
+        String appliedCouponCode,
         LocalDateTime createdAt
 ) {}
