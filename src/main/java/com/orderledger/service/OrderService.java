@@ -4,8 +4,10 @@ import com.orderledger.dao.entity.*;
 import com.orderledger.dao.repository.CouponRepository;
 import com.orderledger.dao.repository.OrderRepository;
 import com.orderledger.dao.repository.UserRepository;
+import com.orderledger.dao.specification.OrderSpecification;
 import com.orderledger.dto.request.OrderCreateRequest;
 import com.orderledger.dto.request.OrderItemRequest;
+import com.orderledger.dto.request.OrderSearchFilter;
 import com.orderledger.dto.request.OrderStatusUpdateRequest;
 import com.orderledger.dto.response.OrderResponse;
 import com.orderledger.exception.InsufficientStockException;
@@ -15,6 +17,9 @@ import com.orderledger.exception.ResourceNotFoundException;
 import com.orderledger.mapper.OrderMapper;
 import com.orderledger.util.OrderStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,7 +131,7 @@ public class OrderService {
 
         OrderStatus currentStatus = order.getStatus();
         OrderStatus newStatus = request.newStatus();
-        
+
         validateStatusTransition(currentStatus, newStatus);
 
         order.setStatus(newStatus);
@@ -165,5 +170,13 @@ public class OrderService {
         if (current == OrderStatus.CANCELLED || current == OrderStatus.COMPLETED) {
             throw new InvalidStatusTransitionException(current + " statusunda olan sifarişin statusu yenidən dəyişdirilə bilməz.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderResponse> getOrdersWithFilter(OrderSearchFilter filter, Pageable pageable) {
+        Specification<OrderEntity> spec = OrderSpecification.getOrdersByFilter(filter);
+
+        return orderRepository.findAll(spec, pageable)
+                .map(orderMapper::toResponse);
     }
 }
