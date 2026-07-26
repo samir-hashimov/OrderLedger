@@ -1,0 +1,2 @@
+ALTER TABLE order_ledger_users
+    ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'ROLE_USER';

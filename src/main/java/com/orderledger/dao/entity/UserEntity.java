@@ -1,8 +1,10 @@
 package com.orderledger.dao.entity;
 
+import com.orderledger.util.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -36,6 +38,10 @@ public class UserEntity {
     @NotBlank(message = "Email daxil edilməlidir")
     @Email(message = "Düzgün email formatı daxil edin")
     String email;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Role boş ola bilməz.")
+    Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<OrderEntity> orders;

@@ -3,7 +3,7 @@ package com.orderledger.controller;
 import com.orderledger.dao.entity.CouponEntity;
 import com.orderledger.dao.repository.CouponRepository;
 import com.orderledger.dto.request.CouponCreateRequest;
-import com.orderledger.mapper.CouponMapper;
+import com.orderledger.service.CouponService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class CouponController {
 
     private final CouponRepository couponRepository;
-    private final CouponMapper couponMapper;
+    private final CouponService couponService;
 
     @PostMapping
     @Operation(summary = "Yeni promo kod/kupon yaratmaq")
     public ResponseEntity<CouponEntity> createCoupon(@Valid @RequestBody CouponCreateRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(couponRepository.save(couponMapper.toEnt(request)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(couponService.saveCoupon(request));
     }
 }

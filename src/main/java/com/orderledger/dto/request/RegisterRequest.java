@@ -1,7 +1,9 @@
 package com.orderledger.dto.request;
 
+import com.orderledger.util.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,4 +28,7 @@ public class RegisterRequest {
     @NotBlank(message = "Ad boş ola bilməz")
     @Size(min = 3, max = 50, message = "Username 3-50 simvol aralığında olmalıdır")
     String username;
+
+    @NotNull(message = "Role boş ola bilməz.")
+    Role role;
 }

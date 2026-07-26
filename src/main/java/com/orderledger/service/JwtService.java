@@ -1,5 +1,6 @@
 package com.orderledger.service;
 
+import com.orderledger.util.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -58,16 +59,21 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public String generateAccessToken(String email) {
+    public String generateAccessToken(String email,Role role) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("token_type", "access");
+        claims.put("token_type", "acceAss");
+        claims.put("role",role.name());
         return buildToken(claims, email, ACCESS_TOKEN_EXPIRATION);
     }
 
-    public String generateRefreshToken(String email) {
+    public String generateRefreshToken(String email, Role role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("token_type", "refresh");
+        claims.put("role",role.name());
         return buildToken(claims, email, REFRESH_TOKEN_EXPIRATION);
+    }
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     private String buildToken(Map<String, Object> extraClaims, String subject, long expiration) {

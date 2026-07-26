@@ -36,8 +36,8 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new UserNotFound("Email və ya şifrə səhv daxil edilib!");
         }
-        String refreshToken = jwtService.generateRefreshToken(request.getEmail());
-        String accessToken = jwtService.generateAccessToken(request.getEmail());
+        String refreshToken = jwtService.generateRefreshToken(request.getEmail(),user.getRole());
+        String accessToken = jwtService.generateAccessToken(request.getEmail(),user.getRole());
         return new JwtResponse(refreshToken, accessToken);
     }
 
@@ -48,7 +48,7 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("İstifadəçi tapılmadı"));
 
         if (jwtService.isTokenValid(request.getRefreshToken(), user.getEmail())) {
-            String newAccessToken = jwtService.generateAccessToken(user.getEmail());
+            String newAccessToken = jwtService.generateAccessToken(user.getEmail(),user.getRole());
             return new JwtResponse(newAccessToken, request.getRefreshToken());
         }
         throw new RuntimeException("Refresh token etibarsızdır!");
