@@ -150,25 +150,32 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long orderId) {
-        OrderEntity order = orderRepository.findByIdWithDetails(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Sifariş tapılmadı! ID: " + orderId));
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        OrderEntity order = orderRepository.findByIdAndUserEmailWithDetails(orderId, currentUserEmail)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Sifariş tapılmadı və ya bu sifarişə baxmaq üçün icazəniz yoxdur! ID: " + orderId
+                ));
+
         return orderMapper.toResponse(order);
     }
 
-    // STATE MACHINE LOGIC (Keçid Qaydaları)
     private void validateStatusTransition(OrderStatus current, OrderStatus next) {
         if (current == next) {
             throw new InvalidStatusTransitionException("Sifariş artıq " + current + " statusundadır.");
         }
 
-        if (current == OrderStatus.SHIPPED || current == OrderStatus.COMPLETED) {
-            if (next == OrderStatus.CANCELLED) {
-                throw new InvalidStatusTransitionException("SHIPPED və ya COMPLETED olunmuş sifariş ləğv edilə bilməz!");
-            }
-        }
+        boolean isValid = switch (current) {
+            case CREATED -> next == OrderStatus.PAID || next == OrderStatus.CANCELLED;
+            case PAID -> next == OrderStatus.SHIPPED || next == OrderStatus.CANCELLED;
+            case SHIPPED -> next == OrderStatus.COMPLETED;
+            case COMPLETED, CANCELLED -> false;
+        };
 
-        if (current == OrderStatus.CANCELLED || current == OrderStatus.COMPLETED) {
-            throw new InvalidStatusTransitionException(current + " statusunda olan sifarişin statusu yenidən dəyişdirilə bilməz.");
+        if (!isValid) {
+            throw new InvalidStatusTransitionException(
+                    String.format("Sifariş statusunu %s statusundan %s statusuna dəyişmək mümkün deyil!", current, next)
+            );
         }
     }
 

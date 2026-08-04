@@ -19,7 +19,7 @@ public class JwtService {
     @Value("${JWT_SECRET}")
     private String SECRET_KEY;
 
-    @Value(("${ACCESS_TOKEN_EXPIRATION}"))
+    @Value("${ACCESS_TOKEN_EXPIRATION}")
     private long ACCESS_TOKEN_EXPIRATION;
 
     @Value("${REFRESH_TOKEN_EXPIRATION}")

@@ -40,7 +40,6 @@ public class UserEntity {
     String email;
 
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "Role boş ola bilməz.")
     Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

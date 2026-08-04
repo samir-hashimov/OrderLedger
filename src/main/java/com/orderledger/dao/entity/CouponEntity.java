@@ -29,6 +29,10 @@ public class CouponEntity {
     @Column(nullable = false)
     Integer maxUsageLimit;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    UserEntity user;
+
     @Builder.Default
     @Column(nullable = false)
     Integer currentUsageCount = 0;

@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OrderRepository extends JpaRepository<OrderEntity, Long> , JpaSpecificationExecutor<OrderEntity> {
+public interface OrderRepository extends JpaRepository<OrderEntity, Long>, JpaSpecificationExecutor<OrderEntity> {
+    @Query("SELECT o FROM OrderEntity o LEFT JOIN FETCH o.items WHERE o.id = :orderId AND o.user.email = :email")
+    Optional<OrderEntity> findByIdAndUserEmailWithDetails(@Param("orderId") Long orderId, @Param("email") String email);
 
     List<OrderEntity> findByUserId(Long userId);
 

@@ -34,6 +34,10 @@ public class ProductEntity {
     @Min(value = 0, message = "Stok miqdarı mənfi ola bilməz")
     Integer stockQuantity;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    UserEntity user;
+
     @Version
     Long version;
 }

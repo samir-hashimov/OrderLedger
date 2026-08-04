@@ -7,7 +7,7 @@ import com.orderledger.dto.request.LoginRequest;
 import com.orderledger.dto.request.RefreshTokenRequest;
 import com.orderledger.dto.request.RegisterRequest;
 import com.orderledger.dto.response.JwtResponse;
-import com.orderledger.exception.UserNotFound;
+import com.orderledger.exception.UserNotFoundException;
 import com.orderledger.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,10 +31,10 @@ public class AuthService {
 
     public JwtResponse login(LoginRequest request) {
         UserEntity user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFound("Email və ya şifrə səhv daxil edilib!"));
+                .orElseThrow(() -> new UserNotFoundException("Email və ya şifrə səhv daxil edilib!"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new UserNotFound("Email və ya şifrə səhv daxil edilib!");
+            throw new UserNotFoundException("Email və ya şifrə səhv daxil edilib!");
         }
         String refreshToken = jwtService.generateRefreshToken(request.getEmail(),user.getRole());
         String accessToken = jwtService.generateAccessToken(request.getEmail(),user.getRole());

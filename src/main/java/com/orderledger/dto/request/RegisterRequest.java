@@ -29,6 +29,5 @@ public class RegisterRequest {
     @Size(min = 3, max = 50, message = "Username 3-50 simvol aralığında olmalıdır")
     String username;
 
-    @NotNull(message = "Role boş ola bilməz.")
     Role role;
 }

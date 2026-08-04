@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItemEntity, Long> {
 
-    // Müəyyən bir sifarişin daxilindəki alt məhsulları tapmaq üçün
     List<OrderItemEntity> findByOrderId(Long orderId);
 }

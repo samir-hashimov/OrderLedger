@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Builder
-public record CouponCreateRequest(
+public record CouponRequest(
         @NotBlank(message = "Kupon kodu boş ola bilməz")
         String code,
 

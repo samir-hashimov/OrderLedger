@@ -3,6 +3,7 @@ package com.orderledger.mapper;
 
 import com.orderledger.dao.entity.UserEntity;
 import com.orderledger.dto.request.RegisterRequest;
+import com.orderledger.util.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class UserMapper {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(request.getRole() !=null ?request.getRole() : Role.ROLE_USER)
                 .build();
     }
 }
