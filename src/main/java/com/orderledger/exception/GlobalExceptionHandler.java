@@ -1,6 +1,8 @@
 package com.orderledger.exception;
 
 import com.orderledger.dto.response.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -29,6 +31,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException ex) {
         return buildResponse(HttpStatus.CONFLICT, "Məhsul stoku eyni anda başqa istifadəçi tərəfindən yeniləndi. Zəhmət olmasa yenidən cəhd edin.");
     }
+
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {

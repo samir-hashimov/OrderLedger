@@ -6,6 +6,7 @@ import com.orderledger.dao.repository.CouponRepository;
 import com.orderledger.dao.repository.UserRepository;
 import com.orderledger.dto.request.CouponRequest;
 import com.orderledger.dto.response.CouponResponse;
+import com.orderledger.exception.CouponAlreadyExistsException;
 import com.orderledger.exception.ResourceNotFoundException;
 import com.orderledger.exception.UserNotFoundException;
 import com.orderledger.mapper.CouponMapper;
@@ -31,12 +32,14 @@ public class CouponService {
         UserEntity currentAdmin = userRepository.findByEmail(currentAdminEmail)
                 .orElseThrow(() -> new UserNotFoundException("İstifadəçi tapılmadı: " + currentAdminEmail));
 
-        if (couponRepository.existsByCodeAndUserEmail(request.code().trim().toUpperCase(), currentAdminEmail)) {
-            throw new RuntimeException("Bu kupon kodu artıq sizin tərəfinizdən yaradılıb!");
+        String normalizedCode = request.code().trim().toUpperCase();
+
+        if (couponRepository.existsByCode(normalizedCode)) {
+            throw new CouponAlreadyExistsException("'" + normalizedCode + "' kupon kodu artıq bazada mövcuddur!");
         }
 
         CouponEntity coupon = couponMapper.toEnt(request);
-        coupon.setCode(request.code().trim().toUpperCase());
+        coupon.setCode(normalizedCode);
         coupon.setUser(currentAdmin);
 
         CouponEntity savedCoupon = couponRepository.save(coupon);
