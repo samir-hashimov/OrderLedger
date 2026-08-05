@@ -1,14 +1,14 @@
 package com.orderledger.mapper;
 
 import com.orderledger.dao.entity.ProductEntity;
-import com.orderledger.dto.request.ProductCreateRequest;
+import com.orderledger.dto.request.ProductRequest;
 import com.orderledger.dto.response.ProductResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProductMapper {
 
-    public ProductEntity toEntity(ProductCreateRequest request) {
+    public ProductEntity toEntity(ProductRequest request) {
         return ProductEntity.builder()
                 .name(request.name())
                 .price(request.price())

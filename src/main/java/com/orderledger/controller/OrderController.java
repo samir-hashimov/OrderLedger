@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
@@ -27,8 +29,9 @@ public class OrderController {
 
     @PostMapping
     @Operation(summary = "Yeni sifariş yerləşdirmək (Stock yoxlaması və Transactional kontrol ilə)")
-    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderCreateRequest request) {
-        OrderResponse response = orderService.createOrder(request);
+    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderCreateRequest request, Principal principal) {
+        String currentAdminEmail = principal.getName();
+        OrderResponse response = orderService.createOrder(request, currentAdminEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -43,8 +46,11 @@ public class OrderController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Sifarişi ID-yə görə detalları və status tarixçəsi ilə gətirmək")
-    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id) {
-        OrderResponse response = orderService.getOrderById(id);
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id
+                                                                    ,Principal principal) {
+        String currentAdminEmail = principal.getName();
+
+        OrderResponse response = orderService.getOrderById(id,currentAdminEmail);
         return ResponseEntity.ok(response);
     }
 

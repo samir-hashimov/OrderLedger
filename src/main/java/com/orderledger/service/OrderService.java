@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,10 +39,9 @@ public class OrderService {
     private final CouponRepository couponRepository;
 
     @Transactional
-    public OrderResponse createOrder(OrderCreateRequest request) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("İstifadəçi tapılmadı: " + email));
+    public OrderResponse createOrder(OrderCreateRequest request, String currentAdminEmail) {
+        UserEntity user = userRepository.findByEmail(currentAdminEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("İstifadəçi tapılmadı: " + currentAdminEmail));
 
         OrderEntity order = OrderEntity.builder()
                 .user(user)
@@ -149,10 +147,8 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderResponse getOrderById(Long orderId) {
-        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        OrderEntity order = orderRepository.findByIdAndUserEmailWithDetails(orderId, currentUserEmail)
+    public OrderResponse getOrderById(Long orderId, String currentAdminEmail) {
+        OrderEntity order = orderRepository.findByIdAndUserEmailWithDetails(orderId, currentAdminEmail)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Sifariş tapılmadı və ya bu sifarişə baxmaq üçün icazəniz yoxdur! ID: " + orderId
                 ));

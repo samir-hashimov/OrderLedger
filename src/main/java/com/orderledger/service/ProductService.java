@@ -4,8 +4,7 @@ import com.orderledger.dao.entity.ProductEntity;
 import com.orderledger.dao.entity.UserEntity;
 import com.orderledger.dao.repository.ProductRepository;
 import com.orderledger.dao.repository.UserRepository;
-import com.orderledger.dto.request.ProductCreateRequest;
-import com.orderledger.dto.request.ProductUpdateRequest;
+import com.orderledger.dto.request.ProductRequest;
 import com.orderledger.dto.response.ProductResponse;
 import com.orderledger.exception.ProductNotFoundException;
 import com.orderledger.exception.ResourceNotFoundException;
@@ -13,7 +12,6 @@ import com.orderledger.exception.UserNotFoundException;
 import com.orderledger.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +27,7 @@ public class ProductService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ProductResponse createProduct(ProductCreateRequest request, String currentAdminEmail) {
+    public ProductResponse createProduct(ProductRequest request, String currentAdminEmail) {
 
         UserEntity currentAdmin = userRepository.findByEmail(currentAdminEmail)
                 .orElseThrow(() -> new UserNotFoundException("İstifadəçi tapılmadı: " + currentAdminEmail));
@@ -74,7 +72,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse updateProduct(Long id, ProductUpdateRequest request, String currentAdminEmail) {
+    public ProductResponse updateProduct(Long id, ProductRequest request, String currentAdminEmail) {
         ProductEntity product = productRepository.findByIdAndUserEmail(id, currentAdminEmail)
                 .orElseThrow(() -> new ProductNotFoundException(
                         "Məhsul tapılmadı və ya bu məhsulu yeniləmək üçün icazəniz yoxdur! ID: " + id
