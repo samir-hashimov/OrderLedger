@@ -32,6 +32,17 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, "Məhsul stoku eyni anda başqa istifadəçi tərəfindən yeniləndi. Zəhmət olmasa yenidən cəhd edin.");
     }
 
+    @ExceptionHandler(CouponAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleCouponAlreadyExists(CouponAlreadyExistsException ex) {
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value()) // 409
+                .error(HttpStatus.CONFLICT.getReasonPhrase()) // "Conflict"
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
