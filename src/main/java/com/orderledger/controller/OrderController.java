@@ -6,6 +6,7 @@ import com.orderledger.dto.request.OrderStatusUpdateRequest;
 import com.orderledger.dto.response.OrderResponse;
 import com.orderledger.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.security.Principal;
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
 @Tag(name = "Order Management", description = "Sifariş yaradılması, status keçidləri və history API-ləri")
+@SecurityRequirement(name = "bearerAuth")
 public class OrderController {
 
     private final OrderService orderService;

@@ -4,6 +4,7 @@ import com.orderledger.dto.request.CouponRequest;
 import com.orderledger.dto.response.CouponResponse;
 import com.orderledger.service.CouponService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/coupons")
 @RequiredArgsConstructor
 @Tag(name = "Coupon Controller", description = "Kuponların idarə edilməsi üçün endpoint-lər")
+@SecurityRequirement(name = "bearerAuth")
 public class CouponController {
 
     private final CouponService couponService;

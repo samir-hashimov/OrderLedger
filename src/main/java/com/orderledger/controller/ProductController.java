@@ -4,6 +4,7 @@ import com.orderledger.dto.request.ProductRequest;
 import com.orderledger.dto.response.ProductResponse;
 import com.orderledger.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 @Tag(name = "Product Management", description = "Məhsul kataloqunun idarə olunması üzrə API-lər")
+@SecurityRequirement(name = "bearerAuth")
 public class ProductController {
 
     private final ProductService productService;

@@ -5,8 +5,11 @@ import com.orderledger.dto.request.RefreshTokenRequest;
 import com.orderledger.dto.request.RegisterRequest;
 import com.orderledger.dto.response.JwtResponse;
 import com.orderledger.service.AuthService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name="Auth Controller",description = "Qeydiyyatdan kecmek ucun endpointler")
 public class AuthController {
 
     private final AuthService authService;
